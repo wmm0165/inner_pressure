@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time : 2019/9/25 23:08
 # @Author : wangmengmeng
-import os
-
+import os, re
 from common.record_log import log
 
 
@@ -25,8 +24,19 @@ class ReadFileTask:
     def read_zip_file(self):
         if self.file_path.exists():
             files = os.listdir(self.file_path)
+            if not files:
+                for file in files:
+                    if ".zip" in os.path.abspath(file):
+                        file_date = re.match(".*(\\d{4}-\\d{1,2}-\\d{1,2}).zip",file)
+            else:
+                log.info("this zip file is empty filePath:{}".format(self.file_path))
         else:
             log.info("this zip file path is not exist filePath:{}".format(self.file_path))
 
     def is_sleep(self):
         pass
+
+
+if __name__ == '__main__':
+    files = os.listdir("D:\myproject\inner_pressure\testdata").sort(key=lambda x: int(x[:-4]))
+    print(files)
