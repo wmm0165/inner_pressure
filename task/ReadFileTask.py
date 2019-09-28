@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Time : 2019/9/25 23:08
 # @Author : wangmengmeng
-import os, re
+import operator
+import os
+import re
+
 from common.record_log import log
 
 
@@ -10,7 +13,7 @@ class ReadFileTask:
         self.file_path = file_path
         self.xml_sum = xml_sum
         self.sleep_time = sleep_time
-        self.effect_foler = effect_folder
+        self.effect_folder = effect_folder
         self.read_date = read_date
         self.start_time = start_time
         self.end_time = end_time
@@ -27,16 +30,39 @@ class ReadFileTask:
             if not files:
                 for file in files:
                     if ".zip" in os.path.abspath(file):
-                        file_date = re.match(".*(\\d{4}-\\d{1,2}-\\d{1,2}).zip",file)
+                        file_date = re.match(".*(\\d{4}-\\d{1,2}-\\d{1,2}).zip", str(file))
+
+                    else:
+                        pass
             else:
                 log.info("this zip file is empty filePath:{}".format(self.file_path))
         else:
             log.info("this zip file path is not exist filePath:{}".format(self.file_path))
 
+    def read_file(self, file_path, xml_num):
+        if not file_path.exists():
+            log.info("this txt file path is not exist filePath:{}".format(file_path))
+            return
+        files = os.listdir(file_path)
+        if not files:
+            log.info("this txt file is empty filePath:{}".format(file_path))
+            return
+        try:
+            for file in files:
+                if os.path.isdir(file):
+                    self.read_file(file_path, xml_num)
+                elif (file.endswith('txt') or file.endwith('xml')) and self.is_can_read(os.path.abspath(file)):
+                    pass
+        except:
+            pass
+
+    def is_can_read(self, file_path):
+        if self.effect_folder in file_path:
+            date = re.match(".*(\\d{4}-\\d{1,2}-\\d{1,2}).*", str(file_path))
+            if not date and operator.gt(date, self.read_date):
+                return True
+        else:
+            return False
+
     def is_sleep(self):
         pass
-
-
-if __name__ == '__main__':
-    files = os.listdir("D:\myproject\inner_pressure\testdata").sort(key=lambda x: int(x[:-4]))
-    print(files)
