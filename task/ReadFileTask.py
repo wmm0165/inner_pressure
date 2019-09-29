@@ -4,6 +4,7 @@
 import operator
 import os
 import re
+from datetime import datetime
 
 from common.record_log import log
 
@@ -64,5 +65,20 @@ class ReadFileTask:
         else:
             return False
 
-    def is_sleep(self):
-        pass
+    def is_sleep(self,is_fetch):
+        is_sleep = self.is_match_time()
+
+
+
+
+    def is_match_time(self):
+        now_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        if operator.gt(self.start_time,self.end_time):
+            return operator.lt(self.start_time,now_time) or operator.gt(now_time,self.end_time)
+        return operator.lt(self.start_time,now_time) or operator.gt(now_time,self.end_time)
+        
+
+
+if __name__ == '__main__':
+    now_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(now_time)
