@@ -76,7 +76,7 @@ class ReadFileTask:
         if operator.gt(self.start_time,self.end_time):
             return operator.lt(self.start_time,now_time) or operator.gt(now_time,self.end_time)
         return operator.lt(self.start_time,now_time) or operator.gt(now_time,self.end_time)
-        
+
 
 
 if __name__ == '__main__':
