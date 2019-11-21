@@ -27,9 +27,10 @@ class SendXml:
             print(n)
             if n % 100 == 0:
                 time.sleep(3)
-                while not q.empty():
-                    with ThreadPoolExecutor(max_workers=2) as executor:
-                        for i in range(1):
+
+                with ThreadPoolExecutor(max_workers=3) as executor:
+                    while not q.empty():
+                        for i in range(2):
                             executor.submit(self.req(q.get()))
 
     def req(self, content):
