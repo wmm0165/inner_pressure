@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 # @Time : 2019/11/19 17:53
 # @Author : wangmengmeng
-from locust import HttpLocust, TaskSet, task
 import os
-import requests
-import time
-from common.record_log import log
-from concurrent.futures import ThreadPoolExecutor
 import queue
+import time
+from concurrent.futures import ThreadPoolExecutor
+
+from locust import HttpLocust, TaskSet, task
+
+from common.record_log import log
 
 
 class ScriptTasks(TaskSet):
@@ -49,3 +50,4 @@ class WebsiteUser(HttpLocust):
 #     sx = SendXml()
 #     path = r'D:\data\2019-11-02\H0003\receive_path'
 #     sx.read_file(path)
+# locust -f locustfile.py --host=http://192.168.x.xx:80 --no-web -c 1 -r 1
