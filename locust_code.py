@@ -40,10 +40,10 @@ class ScriptTasks(TaskSet):
 
 
 class WebsiteUser(HttpLocust):
-    task_set = ScriptTasks
+    task_set = ScriptTasks # 指定一个用户行为
     host = "http://10.1.1.71:9999/auditcenter"
-    min_wait = 300
-    max_wait = 300
+    min_wait = 300 # 模拟用户在执行每个任务之间等待的最小时间，单位为毫秒；
+    max_wait = 300 # 模拟用户在执行每个任务之间等待的最大时间，单位为毫秒（min_wait和max_wait默认值为1000，因此，如果没有声明min_wait和max_wait，则locust将在每个任务之间始终等待1秒。
 
 # if __name__ == '__main__':
 #     sx = SendXml()
