@@ -9,6 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 # 使用线程池
 import datetime
 import queue
+
+
 # python2中是Queue，python3中是queue
 
 class SendXml:

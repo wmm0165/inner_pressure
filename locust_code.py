@@ -13,7 +13,7 @@ import queue
 class ScriptTasks(TaskSet):
     def req(self, content):
         headers = {"Content-Type": "text/plain"}
-        res = self.client.post("/auditcenter/api/v1/auditcenter", data=content.encode("utf-8"), headers=headers)
+        res = self.client.post("/api/v1/auditcenter", data=content.encode("utf-8"), headers=headers)
         log.info("执行结果：{}".format(res.json()))
         # return res
 
@@ -41,7 +41,7 @@ class ScriptTasks(TaskSet):
 
 class WebsiteUser(HttpLocust):
     task_set = ScriptTasks
-    host = "http://10.1.1.71:9999"
+    host = "http://10.1.1.71:9999/auditcenter"
     min_wait = 300
     max_wait = 300
 
