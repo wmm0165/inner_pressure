@@ -2,10 +2,7 @@
 # @Time : 2019/11/19 17:53
 # @Author : wangmengmeng
 from locust import HttpLocust, TaskSet, task
-import os
-import requests
-import time
-from common.record_log import log
+
 from utils import get_file_content
 
 
@@ -17,7 +14,8 @@ class ScriptTasks(TaskSet):
         body = next(self.file_content)
         # self.file_content.__next__()
         headers = {"Content-Type": "text/plain"}
-        res = self.client.post("/auditcenter/api/v1/auditcenter", data=body.encode("utf-8"), headers=headers)
+        res = self.client.post("/auditcenter/api/v1/auditcenter", data=body.encode("utf-8"), headers=headers,
+                               name="/api/v1/auditcenter")
         # log.info("执行结果：{}".format(res.json()))
 
 
