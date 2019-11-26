@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 # @Time : 2019/11/25 22:41
 # @Author : wangmengmeng
+import hashlib
+import json
+import os
+import queue
+import random
+
 from locust import TaskSet, HttpLocust, task
-import hashlib, json, os, queue, random
+
 from utils import get_file_content
 
 
@@ -16,14 +22,15 @@ class SceneOneTaskSet(TaskSet):
         print(params)
         headers = {'Content-Type': "application/json"}
         self.client.post('/syscenter/api/v1/currentUser', data=json.dumps(params), headers=headers)
+        self.client.get('/auditcenter/api/v1/startAuditWork')
 
-    def start_sf(self):
+        # def start_sf(self):
         """开始审方"""
         self.client.get('/auditcenter/api/v1/startAuditWork')
 
     def on_start(self):  # 每个虚拟用户执行操作时运行
         self.login()
-        self.start_sf()
+        # self.start_sf()
 
     @task(3)
     def audit_ipt(self):
@@ -32,15 +39,14 @@ class SceneOneTaskSet(TaskSet):
         param = {}
         res = self.client.post('/auditcenter/api/v1/ipt/selNotAuditIptList', data=json.dumps(param).encode("utf-8"),
                                headers=headers)
-        print("selNotAuditIptList", res)
-        if res['data']['engineInfos']:
-            engineids = [i['id'] for i in res['data']['engineInfos']]
+        print("selNotAuditIptList", res.json())
+        if (res.json())['data']['engineInfos']:
+            engineids = [i['id'] for i in (res.json())['data']['engineInfos']]
             print(engineids)
             random_engineid = random.choice(engineids)
             url = '/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid)
-            print(url)
-            orderlist = self.client.get('/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid))
-            print("orderlist:", orderlist)
+            orderlist = self.client.get('/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid),
+                                        name='/auditcenter/api/v1/ipt/all/orderList').json()
             gp = list(orderlist['data'].keys())[0]
             print(gp)
             para = {
@@ -93,7 +99,7 @@ class SceneOneTaskSet(TaskSet):
 
 class SceneOne(HttpLocust):
     task_set = SceneOneTaskSet
-    host = "http://10.1.1.71:9999"
+    host = "http://demo35.ipharmacare.net:9999"
     user_queue = queue.Queue()
     password = '123456'
     m = hashlib.md5()  # 创建md5对象
