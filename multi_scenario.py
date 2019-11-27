@@ -8,7 +8,7 @@ import queue
 import random
 from locust import TaskSet, HttpLocust, task
 from common.utils import get_file_content
-
+from config.read_config import ReadConfig
 
 class SceneOneTaskSet(TaskSet):
     file_content = get_file_content()
@@ -98,7 +98,8 @@ class SceneOneTaskSet(TaskSet):
 
 class SceneOne(HttpLocust):
     task_set = SceneOneTaskSet
-    host = "http://demo35.ipharmacare.net:9999"
+    rc = ReadConfig()
+    host = rc.get('login','address')
     user_queue = queue.Queue()
     password = '123456'
     m = hashlib.md5()  # 创建md5对象
