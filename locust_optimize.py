@@ -2,7 +2,7 @@
 # @Time : 2019/11/19 17:53
 # @Author : wangmengmeng
 from locust import HttpLocust, TaskSet, task
-from utils import get_file_content
+from common.utils import get_file_content
 
 
 class ScriptTasks(TaskSet):

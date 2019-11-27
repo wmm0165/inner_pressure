@@ -6,10 +6,8 @@ import json
 import os
 import queue
 import random
-
 from locust import TaskSet, HttpLocust, task
-
-from utils import get_file_content
+from common.utils import get_file_content
 
 
 class SceneOneTaskSet(TaskSet):
@@ -47,8 +45,8 @@ class SceneOneTaskSet(TaskSet):
             url = '/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid)
             orderlist = self.client.get('/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid),
                                         name='/auditcenter/api/v1/ipt/all/orderList').json()
-            gp = list(orderlist['data'].keys())[0]
-            print(gp)
+            # gps = list(orderlist['data'].keys()) # 获取所有组号
+            gp = [i for i in list(orderlist['data'].keys()) if orderlist['data'][i][0]['auditMarkStatus'] is None]
             para = {
                 "groupOrderList": [{
                     "auditBoList": [],
@@ -59,7 +57,8 @@ class SceneOneTaskSet(TaskSet):
                     "orderType": 1
                 }]
             }
-            self.client.post('/auditcenter/api/v1/ipt/auditSingle', data=json.dumps(para).encode("utf-8"), headers=headers)
+            self.client.post('/auditcenter/api/v1/ipt/auditSingle', data=json.dumps(para).encode("utf-8"),
+                             headers=headers)
 
     @task
     def query_ipt(self):
@@ -116,6 +115,5 @@ class SceneOne(HttpLocust):
 
 
 if __name__ == '__main__':
-    os.system("locust -f multi_scenario.py --no-web -c 4 -r 2 --logfile=logs/locust.log")
-
+    os.system("locust -f multi_scenario.py --no-web -c 4 -r 2 --logfile=logs/locust.log")  # 无web界面执行脚本
     # os.system("locust -f multi_scenario.py --logfile=logs/locust.log")

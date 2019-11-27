@@ -3,7 +3,6 @@
 # @Author : wangmengmeng
 import os
 from configparser import ConfigParser
-
 from common.record_log import log
 
 
