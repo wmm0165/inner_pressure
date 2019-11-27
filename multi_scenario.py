@@ -10,6 +10,7 @@ from locust import TaskSet, HttpLocust, task
 from common.utils import get_file_content
 from config.read_config import ReadConfig
 
+
 class SceneOneTaskSet(TaskSet):
     file_content = get_file_content()
 
@@ -42,23 +43,25 @@ class SceneOneTaskSet(TaskSet):
             engineids = [i['id'] for i in (res.json())['data']['engineInfos']]
             print(engineids)
             random_engineid = random.choice(engineids)
-            url = '/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid)
-            orderlist = self.client.get('/auditcenter/api/v1/ipt/all/orderList' + '?id=' + str(random_engineid),
-                                        name='/auditcenter/api/v1/ipt/all/orderList').json()
-            # gps = list(orderlist['data'].keys()) # 获取所有组号
+            orderlist = self.client.get('/auditcenter/api/v1/ipt/orderList' + '?id=' + str(random_engineid),
+                                        name='/auditcenter/api/v1/ipt/orderList').json()
+            print("orderlist: \"",orderlist,"\"")
+            # gps = list(orderlist['data'].keys())[0] # 获取组号
             gp = [i for i in list(orderlist['data'].keys()) if orderlist['data'][i][0]['auditMarkStatus'] is None]
+            non_gp = [i for i in list(orderlist['data'].keys()) if orderlist['data'][i][0]['auditMarkStatus'] is not None]
+            print("gp ---------", gp)
+            print("non_gp -----", non_gp)
             para = {
                 "groupOrderList": [{
                     "auditBoList": [],
-                    "groupNo": gp,
+                    "groupNo": gp[0],
                     "auditInfo": "必须修改",
                     "auditStatus": 0,
                     "engineId": random_engineid,
                     "orderType": 1
                 }]
             }
-            self.client.post('/auditcenter/api/v1/ipt/auditSingle', data=json.dumps(para).encode("utf-8"),
-                             headers=headers)
+            self.client.post('/auditcenter/api/v1/ipt/auditSingle', data=json.dumps(para).encode("utf-8"), headers=headers)
 
     @task
     def query_ipt(self):
@@ -91,15 +94,14 @@ class SceneOneTaskSet(TaskSet):
             "page": 1
         }
         headers = {'Content-Type': "application/json"}
-        res = self.client.post("/auditcenter/api/v1/opt/all/optRecipeList", data=json.dumps(params),
-                               headers=headers).json()
+        res = self.client.post("/auditcenter/api/v1/opt/all/optRecipeList", data=json.dumps(params),headers=headers).json()
         print(res)
 
 
 class SceneOne(HttpLocust):
     task_set = SceneOneTaskSet
     rc = ReadConfig()
-    host = rc.get('login','address')
+    host = rc.get('login', 'address')
     user_queue = queue.Queue()
     password = '123456'
     m = hashlib.md5()  # 创建md5对象
@@ -116,5 +118,5 @@ class SceneOne(HttpLocust):
 
 
 if __name__ == '__main__':
-    os.system("locust -f multi_scenario.py --no-web -c 4 -r 2 --logfile=logs/locust.log")  # 无web界面执行脚本
-    # os.system("locust -f multi_scenario.py --logfile=logs/locust.log")
+    # os.system("locust -f multi_scenario.py --no-web -c 4 -r 2 --logfile=logs/locust.log")  # 无web界面执行脚本
+    os.system("locust -f multi_scenario.py")

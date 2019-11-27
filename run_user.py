@@ -8,7 +8,7 @@ from common.delete_user import DeleteUser
 def run_user():
     deleteuser = DeleteUser()
     deleteuser.delete_user()
-    num = int(input("请输入需要新增的用户数;"))
+    num = int(input("请输入需要新增的用户数(输入按回车键):"))
     adduser = AddUser()
     adduser.add_user(num)
 
