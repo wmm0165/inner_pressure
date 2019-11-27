@@ -21,15 +21,14 @@ class SceneOneTaskSet(TaskSet):
         print(params)
         headers = {'Content-Type': "application/json"}
         self.client.post('/syscenter/api/v1/currentUser', data=json.dumps(params), headers=headers)
-        self.client.get('/auditcenter/api/v1/startAuditWork')
 
-        # def start_sf(self):
+    def start_sf(self):
         """开始审方"""
         self.client.get('/auditcenter/api/v1/startAuditWork')
 
     def on_start(self):  # 每个虚拟用户执行操作时运行
         self.login()
-        # self.start_sf()
+        self.start_sf()
 
     @task(3)
     def audit_ipt(self):
